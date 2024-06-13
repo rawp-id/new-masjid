@@ -17,4 +17,7 @@ class Masjid extends Model
         Migration::timestamps();
         Migration::execute();
     }
+
+    protected $table = 'masjid';
+    protected $guaded = ['id'];
 }

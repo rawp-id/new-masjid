@@ -3,6 +3,7 @@
 namespace Core;
 
 use Core\Database;
+use Core\User;
 
 class Auth
 {
@@ -25,20 +26,20 @@ class Auth
 
     public static function attempt($credentials)
     {
-        $username = $credentials['username'];
+        $email = $credentials['email'];
         $password = $credentials['password'];
 
         // Query database untuk mencari pengguna dengan kredensial yang diberikan
         $pdo = Database::getPdo();
-        $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = :username");
-        $stmt->execute(['username' => $username]);
+        $stmt = $pdo->prepare("SELECT id, email, password FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
             // Jika kredensial benar, simpan pengguna di sesi
             $_SESSION['user'] = [
                 'id' => $user['id'],
-                'username' => $user['username']
+                'email' => $user['email']
             ];
             return true;
         }

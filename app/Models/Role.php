@@ -15,4 +15,7 @@ class Role extends Model
         Migration::timestamps();
         Migration::execute();
     }
+
+    protected $table = 'roles';
+    protected $guaded = ['id'];
 }

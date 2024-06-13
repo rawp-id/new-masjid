@@ -18,4 +18,7 @@ class Jamaah extends Model
         Migration::foreign('masjid_id', 'masjid');
         Migration::execute();
     }
+
+    protected $table = 'jamaah';
+    protected $guaded = ['id'];
 }

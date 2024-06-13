@@ -18,4 +18,7 @@ class Kegiatan extends Model
         Migration::foreign('masjid_id', 'masjid');
         Migration::execute();
     }
+
+    protected $table = 'kegiatan';
+    protected $guaded = ['id'];
 }

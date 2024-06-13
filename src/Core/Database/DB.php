@@ -40,7 +40,7 @@ class DB
         $this->values[] = $value;
         return $this;
     }
-     
+
 
     public function orderBy($column, $direction = 'ASC')
     {
@@ -92,5 +92,12 @@ class DB
         $sql = "SELECT " . $this->select . " FROM " . self::$table . $this->join . $this->where . $this->orderBy . $this->limit;
         $statement = Database::query($sql, $this->values);
         return $statement->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+    public function first()
+    {
+        $this->limit(1);
+        $results = $this->get();
+        return !empty($results) ? $results[0] : null;
     }
 }

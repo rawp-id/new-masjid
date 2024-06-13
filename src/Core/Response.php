@@ -44,10 +44,8 @@ class RedirectResponse
 
     public function send()
     {
-        // Lakukan redirect ke path yang ditentukan
         header("Location: {$this->path}");
 
-        // Simpan data sesi jika ada
         foreach ($this->sessionData as $key => $value) {
             $_SESSION[$key] = $value;
         }

@@ -11,6 +11,7 @@ class Model
     protected $guarded = [];
     protected $primaryKey = 'id';
     protected $incrementing = true;
+    protected $timestamps = true;
     protected static $relations = [];
 
     public function __construct($attributes = [])
@@ -34,7 +35,7 @@ class Model
     {
         $instance = new static;
         $sql = "SELECT * FROM " . $instance->getTable();
-        $results = Database::query($sql)->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        $results = Database::query($sql)->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE);
         return $results;
     }
 
@@ -42,7 +43,7 @@ class Model
     {
         $instance = new static;
         $sql = "SELECT * FROM " . $instance->getTable() . " WHERE " . $instance->primaryKey . " = ?";
-        $result = Database::query($sql, [$id])->fetchObject(static::class);
+        $result = Database::query($sql, [$id])->fetchObject();
         return $result;
     }
 
@@ -53,6 +54,13 @@ class Model
 
         if ($instance->incrementing) {
             unset($data[$instance->primaryKey]);
+        }
+
+        // Add created_at and updated_at timestamps
+        $timestamp = date('Y-m-d H:i:s');
+        if (property_exists($instance, 'timestamps') && $instance->timestamps) {
+            $data['created_at'] = $timestamp;
+            $data['updated_at'] = $timestamp;
         }
 
         $columns = implode(', ', array_keys($data));
@@ -67,7 +75,18 @@ class Model
     public static function update($id, $data)
     {
         $instance = new static;
+        // Ubah objek stdClass menjadi array jika diperlukan
+        if (is_object($data)) {
+            $data = (array) $data;
+        }
         $data = $instance->filterData($data);
+
+        // Add updated_at timestamp
+        $timestamp = date('Y-m-d H:i:s');
+        if (property_exists($instance, 'timestamps') && $instance->timestamps) {
+            $data['updated_at'] = $timestamp;
+        }
+
         $set = '';
         $values = [];
         foreach ($data as $key => $value) {
@@ -114,7 +133,7 @@ class Model
         }
         $instance = new static;
         $sql = "SELECT * FROM " . $instance->getTable() . " WHERE $column $operator ?";
-        $results = Database::query($sql, [$value])->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        $results = Database::query($sql, [$value])->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE);
         return $results;
     }
 
@@ -127,7 +146,7 @@ class Model
     public function get()
     {
         $sql = "SELECT * FROM " . $this->getTable();
-        $results = Database::query($sql)->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        $results = Database::query($sql)->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE);
 
         foreach ($this->relations as $relation) {
             $method = $relation;
@@ -152,5 +171,17 @@ class Model
         }
 
         return $data;
+    }
+
+    public static function first($column, $operator = '=', $value = null)
+    {
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+        $instance = new static;
+        $sql = "SELECT * FROM " . $instance->getTable() . " WHERE $column $operator ? LIMIT 1";
+        $result = Database::query($sql, [$value])->fetchObject();
+        return $result;
     }
 }

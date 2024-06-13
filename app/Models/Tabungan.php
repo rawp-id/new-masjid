@@ -18,4 +18,7 @@ class Tabungan extends Model
         Migration::foreign('jamaah_id', 'jamaah');
         Migration::execute();
     }
+
+    protected $table = 'tabungan';
+    protected $guaded = ['id'];
 }

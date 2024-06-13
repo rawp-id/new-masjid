@@ -52,7 +52,6 @@ class Database {
         }
     }
 
-
     public static function getPdo() {
         self::connect();
         return self::$pdo;

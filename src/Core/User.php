@@ -25,7 +25,7 @@ class User
         $user = $stmt->fetch();
 
         if ($user) {
-            return new self($user['id'], $user['username'], $user['email']);
+            return new self($user['id'], $user['email'], $user['email']);
         }
         return null;
     }

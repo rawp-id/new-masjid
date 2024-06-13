@@ -15,8 +15,12 @@ class DetailKeuangan extends Model
         Migration::integer('jumlah');
         Migration::datetime('tanggal');
         Migration::text('keterangan');
+        Migration::string('bukti')->nullable();
         Migration::timestamps();
         Migration::foreign('masjid_id', 'masjid');
         Migration::execute();
     }
+
+    protected $table = 'detail_keuangan';
+    protected $guaded = ['id'];
 }
